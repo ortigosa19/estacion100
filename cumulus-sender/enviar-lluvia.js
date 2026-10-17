@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CUMULUS_URL = (process.env.CUMULUS_URL || 'http://127.0.0.1:8998').replace(/\/+$/, '');
-const RENDER_URL = (process.env.RENDER_URL || 'https://estacion2.onrender.com').replace(/\/+$/, '');
+const RENDER_URL = (process.env.RENDER_URL || 'https://estacion100.onrender.com').replace(/\/+$/, '');
 const TOKEN = process.env.CUMULUS_PUSH_TOKEN || '';
 const DATA_DIR = process.env.CUMULUS_DATA_DIR || 'C:\\CumulusMX\\data';
 const INTERVAL_MS = 1 * 60 * 1000;
@@ -71,6 +71,42 @@ async function leerMes(year, month) {
   const value = Number(match[0]);
   if (!Number.isFinite(value) || value < 0) throw new Error(`Lluvia no válida: ${text}`);
   return Number(value.toFixed(2));
+}
+
+async function leerActual() {
+  const url = `${CUMULUS_URL}/api/tags/process.json?temp&hum&dew&wind&gust&bearing&rrate&rfall&press&solar&uv&latesttime`;
+  const response = await fetch(url, { headers: { Accept: 'application/json,text/plain,*/*' }, signal: AbortSignal.timeout(8000) });
+  const body = await response.text();
+  if (!response.ok) throw new Error(`CumulusMX actual HTTP ${response.status}: ${body.slice(0, 160)}`);
+  let d;
+  try { d = JSON.parse(body); } catch { throw new Error(`CumulusMX no devolvió JSON: ${body.slice(0, 120)}`); }
+  const pick = (...keys) => { for (const k of keys) if (d[k] !== undefined && d[k] !== null && d[k] !== '') return d[k]; return null; };
+  return {
+    temperatura: numero(pick('temp', 'temperature', 'outTemp')),
+    humedad: numero(pick('hum', 'humidity', 'outHumidity')),
+    puntoRocio: numero(pick('dew', 'dewpoint', 'dewPoint')),
+    viento: numero(pick('wind', 'windspeed', 'windSpeed')),
+    racha: numero(pick('gust', 'windgust', 'windGust')),
+    direccion: numero(pick('bearing', 'winddir', 'windDirection')),
+    tasaLluvia: numero(pick('rrate', 'rainrate', 'rainRate')),
+    lluviaHoy: numero(pick('rfall', 'raintoday', 'rainToday')),
+    presion: numero(pick('press', 'pressure', 'barometer')),
+    solar: numero(pick('solar', 'solarRad', 'solarRadiation')),
+    uv: numero(pick('uv', 'UV', 'uvIndex')),
+    hora: String(pick('latesttime', 'time', 'dateTime') || new Date().toLocaleString('es-ES'))
+  };
+}
+
+async function enviarActual() {
+  const datos = await leerActual();
+  if (datos.temperatura === null && datos.humedad === null && datos.viento === null) throw new Error('CumulusMX no devolvió valores actuales reconocibles.');
+  const response = await fetch(`${RENDER_URL}/api/cumulus/current`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-cumulus-token': TOKEN },
+    body: JSON.stringify(datos), signal: AbortSignal.timeout(15000)
+  });
+  const body = await response.text();
+  if (!response.ok) throw new Error(`Render actual HTTP ${response.status}: ${body.slice(0, 180)}`);
+  console.log(`${new Date().toLocaleString('es-ES')} | Datos actuales enviados: T=${datos.temperatura}, H=${datos.humedad}, viento=${datos.viento}`);
 }
 
 async function enviarLluvia(year, month, total_mm) {
@@ -168,6 +204,7 @@ async function cicloLluvia() {
 async function main() {
   console.log(`Agente CumulusMX iniciado. Origen: ${CUMULUS_URL} | Destino: ${RENDER_URL}`);
   console.log(`Carpeta de logs: ${DATA_DIR}`);
+  try { await enviarActual(); } catch (err) { console.error(`Actuales: ${err.message}`); }
 
   // Primera ejecución: enviar todo el historial disponible.
   await sincronizarHistorial(false);
@@ -175,6 +212,7 @@ async function main() {
 
   // Cada 1 minuto: mantener la lluvia mensual y actualizar los últimos 3 días.
   setInterval(async () => {
+    try { await enviarActual(); } catch (err) { console.error(`Actuales: ${err.message}`); }
     await cicloLluvia();
     await sincronizarHistorial(true);
   }, INTERVAL_MS);

@@ -141,12 +141,33 @@
 
     const FETCH_OPTS = { cache: 'no-store', credentials: 'include' };
 
-    // Weather Underground ya no se utiliza para los datos actuales.
-    // El servidor actual no publica todav铆a un endpoint /api/cumulus/current;
-    // no hacemos llamadas antiguas que provoquen HTTP 400.
-    function fetchWeatherData() {
+    async function fetchWeatherData() {
       const em = document.getElementById('error-message');
-      if (em) em.classList.add('hidden');
+      try {
+        const res = await fetch(`${window.RAIL_API_BASE}/api/cumulus/current`, FETCH_OPTS);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.datos) throw new Error(data.detalle || data.error || `HTTP ${res.status}`);
+        const d = data.datos;
+        const set = (id, value, suffix = '') => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = value === null || value === undefined || value === '' ? '--' : `${value}${suffix}`;
+        };
+        set('temperature', d.temperatura, ' °C');
+        set('humidity', d.humedad, ' %');
+        set('wind-speed', d.viento, ' km/h');
+        set('wind-dir', d.direccion, '°');
+        set('rainfall', d.lluviaHoy, ' mm');
+        set('pressure', d.presion, ' hPa');
+        set('uv-index', d.uv);
+        set('time', d.hora || d.recibido || '--');
+        if (em) em.classList.add('hidden');
+      } catch (err) {
+        if (em) {
+          em.textContent = 'No llegan datos actuales de CumulusMX. Comprueba que el agente cumulus-sender está ejecutándose en el PC.';
+          em.classList.remove('hidden');
+        }
+        console.error('Error al cargar datos actuales de CumulusMX:', err);
+      }
     }
 
     async function fetchForecast() {
@@ -164,12 +185,12 @@
         const code = data.daily.weathercode;
         const lluvia = data.daily.precipitation_probability_max;
         const desc = {
-          0: 'Despejado 鈽€锔?, 1: 'Mayormente despejado 馃尋锔?, 2: 'Parcialmente nublado 鉀?,
-          3: 'Nublado 鈽侊笍', 45: 'Niebla 馃尗锔?, 48: 'Niebla escarchada 馃尗锔忊潉锔?,
-          51: 'Llovizna ligera 馃對锔?, 53: 'Llovizna moderada 馃導锔?, 55: 'Llovizna densa 馃導锔?,
-          61: 'Lluvia ligera 馃對锔?, 63: 'Lluvia moderada 馃導锔?, 65: 'Lluvia intensa 馃導锔?,
-          71: 'Nieve ligera 馃尐锔?, 73: 'Nieve moderada 馃尐锔?, 75: 'Nieve intensa 鉂勶笍',
-          80: 'Chubascos ligeros 馃對锔?, 81: 'Chubascos moderados 馃導锔?, 82: 'Chubascos fuertes 鉀堬笍'
+          0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado',
+          3: 'Nublado', 45: 'Niebla', 48: 'Niebla escarchada',
+          51: 'Llovizna ligera', 53: 'Llovizna moderada', 55: 'Llovizna densa',
+          61: 'Lluvia ligera', 63: 'Lluvia moderada', 65: 'Lluvia intensa',
+          71: 'Nieve ligera', 73: 'Nieve moderada', 75: 'Nieve intensa',
+          80: 'Chubascos ligeros', 81: 'Chubascos moderados', 82: 'Chubascos fuertes'
         };
         forecastDiv.innerHTML = '';
         for (let i = 0; i < dias.length; i++) {
@@ -228,6 +249,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       fetchWeatherData();
+      setInterval(fetchWeatherData, 60000);
       fetchForecast();
       const botonMes = document.getElementById("boton-mes");
       if (botonMes) {
@@ -257,7 +279,7 @@
       }
     } catch (e) {
       console.error(e);
-      el.textContent = '鈥?;
+      el.textContent = '--';
       el.title = 'No se pudo cargar la lluvia anual';
     }
   })();

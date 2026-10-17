@@ -124,7 +124,7 @@ app.use((req, res, next) => {
   if (p === '/login.html' || p === '/api/auth/login' || p === '/api/auth/logout' ||
       p === '/api/auth/me' || p === '/health' || p === '/salud' ||
       p === '/api/cumulus/lluvia' || p === '/api/cumulus/test' ||
-      p === '/api/cumulus/historial' ||
+      p === '/api/cumulus/historial' || p === '/api/cumulus/current' ||
       p.startsWith('/assets/') || p === '/favicon.ico') return next();
   return requireLogin(req, res, next);
 });
@@ -224,6 +224,37 @@ app.get('/verificar-sesion', (req, res) => res.json({ activo: !!currentUser(req)
 const HISTORIAL_FALLBACK = 'https://prueba2-production-50d4.up.railway.app/';
 app.get('/historial-url', (req, res) => {
   res.json({ url: process.env.HISTORIAL_URL || HISTORIAL_FALLBACK });
+});
+
+/* ============ Datos actuales enviados por el PC CumulusMX ============ */
+const CURRENT_CACHE_FILE = path.join(DB_DIR, 'cumulus-current.json');
+function readCurrentCache() {
+  try { return JSON.parse(fs.readFileSync(CURRENT_CACHE_FILE, 'utf8')); }
+  catch { return null; }
+}
+app.post('/api/cumulus/current', (req, res) => {
+  const expected = process.env.CUMULUS_PUSH_TOKEN;
+  const supplied = String(req.get('x-cumulus-token') || req.body?.token || '');
+  if (!expected) return res.status(503).json({ error: 'push_not_configured' });
+  if (supplied.length !== expected.length || supplied !== expected) return res.status(401).json({ error: 'unauthorized' });
+  const input = req.body || {};
+  const n = v => { if (v === null || v === undefined || String(v).trim() === '') return null; const x = Number(String(v).replace(',', '.')); return Number.isFinite(x) ? x : null; };
+  const data = {
+    temperatura: n(input.temperatura), humedad: n(input.humedad), puntoRocio: n(input.puntoRocio),
+    viento: n(input.viento), racha: n(input.racha), direccion: n(input.direccion),
+    lluviaHoy: n(input.lluviaHoy), tasaLluvia: n(input.tasaLluvia), presion: n(input.presion),
+    solar: n(input.solar), uv: n(input.uv), hora: String(input.hora || new Date().toLocaleString('es-ES')),
+    recibido: new Date().toISOString(), origen: 'CumulusMX PC'
+  };
+  if (data.temperatura === null && data.humedad === null && data.viento === null) return res.status(400).json({ error: 'no_weather_values', detalle: 'No llegaron temperatura, humedad ni viento.' });
+  try { fs.writeFileSync(CURRENT_CACHE_FILE, JSON.stringify(data, null, 2), 'utf8'); }
+  catch (e) { return res.status(500).json({ error: 'save_failed', detalle: String(e.message || e) }); }
+  return res.json({ ok: true, recibido: data.recibido, datos: data });
+});
+app.get('/api/cumulus/current', (_req, res) => {
+  const data = readCurrentCache();
+  if (!data) return res.status(404).json({ ok: false, error: 'no_current_data', detalle: 'El PC aún no ha enviado datos actuales de CumulusMX.' });
+  res.set('Cache-Control', 'no-store').json({ ok: true, datos: data });
 });
 
 /* ============ Proxies Weather.com PWS ============ */
