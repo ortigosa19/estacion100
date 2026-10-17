@@ -1,0 +1,21 @@
+{
+  "name": "estacion",
+  "version": "1.0.0",
+  "description": "Estación meteorológica ALFARNATE con usuarios y acceso protegido",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-fetch": "^2.6.11",
+    "express-session": "^1.18.1"
+  },
+  "engines": {
+    "node": ">=18 <21"
+  },
+  "license": "MIT"
+}

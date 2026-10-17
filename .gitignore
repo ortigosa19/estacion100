@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+node_modules/
+*.zip
+db/*.db
+
+db/usuarios.json
+db/usuarios.json.tmp
+alfarnate_sin_login/

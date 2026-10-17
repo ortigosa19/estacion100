@@ -1,0 +1,31 @@
+AGENTE CUMULUSMX -> RENDER (ALFARNATE)
+
+IMPORTANTE: no publiques el token ni lo envíes a nadie. Debe ser idéntico en Render y en este PC.
+
+1) En Render, abre el servicio estacion2 -> Environment y añade:
+   CUMULUS_PUSH_TOKEN = una cadena larga aleatoria, por ejemplo genera una con PowerShell:
+   [guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N')
+   Copia el resultado y guárdalo para el paso 3. Render puede reiniciar el servicio al guardar.
+
+2) En el PC donde está CumulusMX, comprueba en el navegador que abre:
+   http://127.0.0.1:8998/
+   Si no abre, no inicies el agente hasta corregir el puerto de CumulusMX.
+
+3) Instala Node.js 18 o superior en ese PC si aún no está instalado.
+   Abre PowerShell en esta carpeta cumulus-sender y ejecuta (sustituye PEGAR_TOKEN por el token del paso 1):
+   $env:CUMULUS_PUSH_TOKEN='PEGAR_TOKEN'
+   $env:RENDER_URL='https://estacion2.onrender.com'
+   node .\enviar-lluvia.js
+
+4) Déjalo abierto unos minutos. Debe mostrar líneas con los milímetros enviados. El agente reenvía los totales de los meses del año cada 10 minutos.
+
+5) Comprueba el resultado abriendo:
+   https://estacion2.onrender.com/api/cumulus/lluvia
+   Debe devolver JSON con una lista en "datos".
+   Después prueba la lluvia de un mes, por ejemplo:
+   https://estacion2.onrender.com/api/lluvia/mensual?year=2026&month=10
+
+NOTAS:
+- El endpoint /api/cumulus/lluvia requiere el token y no acepta envíos sin autenticar.
+- El almacenamiento incluido usa un archivo en el servicio. En Render gratuito el disco local puede ser efímero; para conservar el histórico garantizado tras despliegues hay que usar almacenamiento persistente externo.
+- El agente consulta el webtag MonthRainfall de CumulusMX. Verifica que la respuesta de CumulusMX sea numérica y esté en mm antes de confiar en los datos.

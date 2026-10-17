@@ -1,0 +1,25 @@
+ALFARNATE - Froggit / Weather Underground
+
+LOCAL: descomprime el ZIP, abre una terminal en prueba1-main, ejecuta npm install y npm start. Visita http://localhost:8080. El archivo .env contiene tu clave API; NO lo subas a GitHub ni lo compartas.
+
+RAILWAY: en Variables configura WU_API_KEY con tu clave y WU_STATION_ID=IALFAR42. El archivo .env se excluye con .gitignore.
+
+La clave fue compartida en una conversacion: es recomendable regenerarla y actualizar .env y Railway.
+
+La estacion puede tardar en proporcionar historicos; la prevision usa Open-Meteo.
+
+
+LLUVIA MENSUAL: ahora se obtiene directamente de CumulusMX mediante el webtag MonthRainfall.
+Configura CUMULUS_URL=http://localhost:8998 si el servidor Node y CumulusMX están en el mismo PC.
+Si Node está en Railway, CumulusMX debe ser accesible desde Railway mediante una URL pública o red accesible.
+
+
+ACCESO Y USUARIOS (restaurado):
+- Al entrar en la web solo se solicita el nombre de usuario; no hay contraseña.
+- Primer acceso: introduce únicamente el usuario admin. El administrador se crea automáticamente en el primer arranque.
+- Entra como admin para crear usuarios, dar rol de administrador o usuario, y eliminar cuentas. La cuenta admin está protegida frente a eliminación.
+- Desde la administración puedes crear usuarios y asignarles rol de usuario o administrador.
+- Se permite una sesión por usuario: un nuevo inicio de sesión invalida la anterior.
+- Los usuarios se guardan en db/usuarios.json. En Railway, añade un volumen persistente montado en la carpeta db si quieres conservarlos entre despliegues/reinicios.
+- Configura SESSION_SECRET con una cadena larga y aleatoria en Railway. Para cookies seguras en producción, deja NODE_ENV=production y COOKIE_SECURE distinto de false.
+- Si el servidor se ejecuta desde varias instancias, el almacenamiento de sesión en memoria no comparte sesiones entre instancias; usa una sola réplica para mantener la regla de sesión única.
