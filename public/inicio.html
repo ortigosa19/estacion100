@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Estación Meteorológica</title>
+  <title>Estaci贸n Meteorol贸gica</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -79,39 +79,39 @@
 
 </head>
 <body class="px-2 sm:px-4">
-  <header class="w-full max-w-3xl flex items-center justify-between gap-3 mb-4"><h1 class="text-4xl font-bold text-white">ALFARNATE</h1><div class="flex gap-2"><span id="usuario-actual" class="text-white self-center text-sm"></span><button id="cerrar-sesion" class="top-right-button">Cerrar sesión</button></div></header>
+  <header class="w-full max-w-3xl flex items-center justify-between gap-3 mb-4"><h1 class="text-4xl font-bold text-white">ALFARNATE</h1><div class="flex gap-2"><span id="usuario-actual" class="text-white self-center text-sm"></span><button id="cerrar-sesion" class="top-right-button">Cerrar sesi贸n</button></div></header>
 
   <div class="weather-screen">
-    <h1 class="text-2xl font-bold">📡 Estación Meteorológica SANCHEZ MORENO</h1>
+    <h1 class="text-2xl font-bold">馃摗 Estaci贸n Meteorol贸gica SANCHEZ MORENO</h1>
     <div class="data-grid">
 
-      <!-- Tarjeta: Lluvia acumulada (AÑO ACTUAL) -->
+      <!-- Tarjeta: Lluvia acumulada (A脩O ACTUAL) -->
       <div class="bg-slate-800/60 backdrop-blur rounded-2xl p-4 shadow-lg border border-slate-700 w-full max-w-xs">
         <div class="text-slate-300 text-sm">Lluvia acumulada</div>
         <div id="total-lluvia" class="text-4xl font-extrabold text-cyan-300 mt-1">--</div>
-        <div id="total-lluvia-rango" class="text-slate-400 text-xs mt-1">(año actual)</div>
+        <div id="total-lluvia-rango" class="text-slate-400 text-xs mt-1">(a帽o actual)</div>
       </div>
 
-      <div class="data-box"><p class="label">🌡️ Temperatura</p><p class="value" id="temperature">--</p></div>
-      <div class="data-box"><p class="label">💧 Humedad</p><p class="value" id="humidity">--</p></div>
-      <div class="data-box"><p class="label">💨 Viento</p><p class="value" id="wind-speed">--</p></div>
-      <div class="data-box"><p class="label">🧭 Dirección</p><p class="value" id="wind-dir">--</p></div>
-      <div class="data-box"><p class="label">🌧️ Lluvia</p><p class="value" id="rainfall">--</p></div>
-      <div class="data-box"><p class="label">🌍 Presión</p><p class="value" id="pressure">--</p></div>
-      <div class="data-box"><p class="label">☀️ Índice UV</p><p class="value" id="uv-index">--</p></div>
-      <div class="data-box"><p class="label">🕒 Hora</p><p class="value" id="time">--</p></div>
+      <div class="data-box"><p class="label">馃尅锔?Temperatura</p><p class="value" id="temperature">--</p></div>
+      <div class="data-box"><p class="label">馃挧 Humedad</p><p class="value" id="humidity">--</p></div>
+      <div class="data-box"><p class="label">馃挩 Viento</p><p class="value" id="wind-speed">--</p></div>
+      <div class="data-box"><p class="label">馃Л Direcci贸n</p><p class="value" id="wind-dir">--</p></div>
+      <div class="data-box"><p class="label">馃導锔?Lluvia</p><p class="value" id="rainfall">--</p></div>
+      <div class="data-box"><p class="label">馃實 Presi贸n</p><p class="value" id="pressure">--</p></div>
+      <div class="data-box"><p class="label">鈽€锔?脥ndice UV</p><p class="value" id="uv-index">--</p></div>
+      <div class="data-box"><p class="label">馃晵 Hora</p><p class="value" id="time">--</p></div>
     </div>
     <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
   </div>
 
   <div class="weather-screen">
-    <h2 class="text-xl font-bold mb-4">🔮 Pronóstico de 7 días</h2>
+    <h2 class="text-xl font-bold mb-4">馃敭 Pron贸stico de 7 d铆as</h2>
     <div id="forecast" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-left text-sm sm:text-base"></div>
   </div>
 
-  <!-- Selector y gráfico mensual -->
+  <!-- Selector y gr谩fico mensual -->
   <div class="weather-screen">
-    <h2 class="text-xl font-bold mb-2">📅 Lluvia mensual (CumulusMX)</h2>
+    <h2 class="text-xl font-bold mb-2">馃搮 Lluvia mensual (CumulusMX)</h2>
     <input id="mes-selector" type="month" class="text-black p-1 rounded mb-2"/>
     <button id="boton-mes" class="top-right-button">Calcular</button>
     <div id="spinner-mes"></div>
@@ -119,15 +119,15 @@
     <canvas id="grafico-lluvia" width="400" height="200"></canvas>
   </div>
 
-  <!-- Botón historial -->
+  <!-- Bot贸n historial -->
   <div class="weather-screen">
-    <button id="btn-historial" class="top-right-button mt-4 w-full sm:w-auto">📊 Ver Historial</button>
+    <button id="btn-historial" class="top-right-button mt-4 w-full sm:w-auto">馃搳 Ver Historial</button>
   </div>
 
-  <!-- Overlay por sesión cerrada -->
+  <!-- Overlay por sesi贸n cerrada -->
 <script>
     // =========================
-    //  CONFIGURACIÓN DE BACKEND
+    //  CONFIGURACI脫N DE BACKEND
     // =========================
     (function initApiBase(){
       const meta = document.querySelector('meta[name="rail-api-base"]');
@@ -139,62 +139,18 @@
         'https://produccion-alemana-d2b4.up.railway.app';
     })();
 
-    const STATION_ID = 'IALFAR42';
     const FETCH_OPTS = { cache: 'no-store', credentials: 'include' };
 
-    async function fetchWeatherData() {
-      const url = `${window.RAIL_API_BASE}/api/weather/current?stationId=${encodeURIComponent(STATION_ID)}`;
-      try {
-        const response = await fetch(url, FETCH_OPTS);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const text = await response.text();
-        if (!text) throw new Error('Respuesta vacía');
-        const ct = (response.headers.get('content-type') || '').toLowerCase();
-        if (!ct.includes('application/json')) throw new Error('Respuesta no es JSON');
-        const data = JSON.parse(text);
-
-        const obs = data.observations?.[0] || data.data?.observations?.[0] || data.data?.[0] || data?.observations?.[0];
-        if (!obs) throw new Error("Datos no disponibles.");
-
-        const metric = obs.metric || obs.metrics || {};
-        document.getElementById('temperature').textContent = `${metric.temp ?? '—'} °C`;
-        document.getElementById('humidity').textContent   = `${obs.humidity ?? '—'} %`;
-        document.getElementById('wind-speed').textContent = `${metric.windSpeed ?? '—'} km/h`;
-
-        const dir = Number(obs.winddir);
-        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
-        const idx = Number.isFinite(dir) ? Math.round(dir / 45) % 8 : null;
-        document.getElementById('wind-dir').textContent = Number.isFinite(dir) ? `${dir}° (${dirs[idx]})` : '—';
-
-        document.getElementById('rainfall').textContent = `${metric.precipTotal ?? '—'} mm`;
-        document.getElementById('pressure').textContent = `${metric.pressure ?? '—'} hPa`;
-        // El UV no lo mide la estación; se consulta al servidor (Open-Meteo).
-        document.getElementById('uv-index').textContent = '…';
-        fetch(`${window.RAIL_API_BASE}/api/uv/current`, FETCH_OPTS)
-          .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-          .then(uvData => {
-            const uv = uvData && uvData.uv;
-            document.getElementById('uv-index').textContent =
-              Number.isFinite(Number(uv)) ? Number(uv).toFixed(1) : '—';
-          })
-          .catch(err => {
-            console.warn('No se pudo obtener el índice UV:', err);
-            document.getElementById('uv-index').textContent = '—';
-          });
-        const when = obs.obsTimeLocal || obs.obsTimeUtc;
-        document.getElementById('time').textContent = when ? new Date(when).toLocaleString() : '—';
-
-        document.getElementById('error-message').classList.add('hidden');
-      } catch (err) {
-        console.error('⚠️ Error al obtener la meteo:', err);
-        const em = document.getElementById('error-message');
-        if (em) { em.textContent = 'No se pudo obtener la información meteorológica.'; em.classList.remove('hidden'); }
-      }
+    // Weather Underground ya no se utiliza para los datos actuales.
+    // El servidor actual no publica todav铆a un endpoint /api/cumulus/current;
+    // no hacemos llamadas antiguas que provoquen HTTP 400.
+    function fetchWeatherData() {
+      const em = document.getElementById('error-message');
+      if (em) em.classList.add('hidden');
     }
 
     async function fetchForecast() {
-      // Si prefieres, también puedes proxear Open-Meteo por tu backend
+      // Si prefieres, tambi茅n puedes proxear Open-Meteo por tu backend
       const lat = 36.985;
       const lon = -4.223;
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,weathercode,precipitation_probability_max&timezone=auto&forecast_days=7`;
@@ -208,21 +164,21 @@
         const code = data.daily.weathercode;
         const lluvia = data.daily.precipitation_probability_max;
         const desc = {
-          0: 'Despejado ☀️', 1: 'Mayormente despejado 🌤️', 2: 'Parcialmente nublado ⛅',
-          3: 'Nublado ☁️', 45: 'Niebla 🌫️', 48: 'Niebla escarchada 🌫️❄️',
-          51: 'Llovizna ligera 🌦️', 53: 'Llovizna moderada 🌧️', 55: 'Llovizna densa 🌧️',
-          61: 'Lluvia ligera 🌦️', 63: 'Lluvia moderada 🌧️', 65: 'Lluvia intensa 🌧️',
-          71: 'Nieve ligera 🌨️', 73: 'Nieve moderada 🌨️', 75: 'Nieve intensa ❄️',
-          80: 'Chubascos ligeros 🌦️', 81: 'Chubascos moderados 🌧️', 82: 'Chubascos fuertes ⛈️'
+          0: 'Despejado 鈽€锔?, 1: 'Mayormente despejado 馃尋锔?, 2: 'Parcialmente nublado 鉀?,
+          3: 'Nublado 鈽侊笍', 45: 'Niebla 馃尗锔?, 48: 'Niebla escarchada 馃尗锔忊潉锔?,
+          51: 'Llovizna ligera 馃對锔?, 53: 'Llovizna moderada 馃導锔?, 55: 'Llovizna densa 馃導锔?,
+          61: 'Lluvia ligera 馃對锔?, 63: 'Lluvia moderada 馃導锔?, 65: 'Lluvia intensa 馃導锔?,
+          71: 'Nieve ligera 馃尐锔?, 73: 'Nieve moderada 馃尐锔?, 75: 'Nieve intensa 鉂勶笍',
+          80: 'Chubascos ligeros 馃對锔?, 81: 'Chubascos moderados 馃導锔?, 82: 'Chubascos fuertes 鉀堬笍'
         };
         forecastDiv.innerHTML = '';
         for (let i = 0; i < dias.length; i++) {
           const dia = new Date(dias[i]).toLocaleDateString('es-ES', { weekday: 'long' });
-          forecastDiv.innerHTML += `<div><strong>${dia}</strong><br>${desc[code[i]] || 'Clima'}<br>🌡️ ${min[i]}°C - ${max[i]}°C<br>🌧️ ${lluvia[i]}%</div>`;
+          forecastDiv.innerHTML += `<div><strong>${dia}</strong><br>${desc[code[i]] || 'Clima'}<br>馃尅锔?${min[i]}掳C - ${max[i]}掳C<br>馃導锔?${lluvia[i]}%</div>`;
         }
       } catch (e) {
-        document.getElementById("forecast").textContent = "Error al cargar el pronóstico";
-        console.error("Error al obtener pronóstico:", e);
+        document.getElementById("forecast").textContent = "Error al cargar el pron贸stico";
+        console.error("Error al obtener pron贸stico:", e);
       }
     }
 
@@ -233,13 +189,13 @@
       const canvas = document.getElementById('grafico-lluvia');
 
       if (!mesInput) {
-        resultado.textContent = "⚠️ Selecciona un mes válido.";
+        resultado.textContent = "鈿狅笍 Selecciona un mes v谩lido.";
         return;
       }
 
       const [year, month] = mesInput.split("-");
       spinner.style.display = "block";
-      resultado.textContent = "🔄 Consultando CumulusMX...";
+      resultado.textContent = "馃攧 Consultando CumulusMX...";
 
       fetch(`${window.RAIL_API_BASE}/api/lluvia/mensual?year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`, FETCH_OPTS)
         .then(res => {
@@ -248,11 +204,11 @@
         })
         .then(data => {
           const total = Number(data?.total_mm);
-          if (!Number.isFinite(total)) throw new Error('CumulusMX no devolvió una lluvia válida');
+          if (!Number.isFinite(total)) throw new Error('CumulusMX no devolvi贸 una lluvia v谩lida');
 
-          resultado.textContent = `🌧️ Lluvia total en ${month}/${year}: ${total.toFixed(2)} mm`;
+          resultado.textContent = `馃導锔?Lluvia total en ${month}/${year}: ${total.toFixed(2)} mm`;
 
-          // El gráfico anterior se alimentaba de Weather Underground.
+          // El gr谩fico anterior se alimentaba de Weather Underground.
           // Al cambiar la fuente a CumulusMX no mostramos datos de una fuente distinta.
           if (window.miGrafico) {
             window.miGrafico.destroy();
@@ -262,8 +218,8 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
         })
         .catch(err => {
-          resultado.textContent = "❌ No se pudo obtener la lluvia de CumulusMX. Comprueba que CumulusMX está activo y que CUMULUS_URL apunta a él.";
-          console.error("⚠️ Error al obtener la lluvia mensual desde CumulusMX:", err);
+          resultado.textContent = "鉂?No se pudo obtener la lluvia de CumulusMX. Comprueba que CumulusMX est谩 activo y que CUMULUS_URL apunta a 茅l.";
+          console.error("鈿狅笍 Error al obtener la lluvia mensual desde CumulusMX:", err);
         })
         .finally(() => {
           spinner.style.display = "none";
@@ -273,7 +229,6 @@
     document.addEventListener("DOMContentLoaded", () => {
       fetchWeatherData();
       fetchForecast();
-      setInterval(fetchWeatherData, 60000);
       const botonMes = document.getElementById("boton-mes");
       if (botonMes) {
         botonMes.addEventListener("click", mostrarLluviaAcumuladaPorMes);
@@ -283,7 +238,7 @@
   </script>
 
   <script>
-  // === Cargar total lluvia del año actual desde tu backend ===
+  // === Cargar total lluvia del a帽o actual desde tu backend ===
   (async function cargarTotalLluviaAnual(){
     const el = document.getElementById('total-lluvia');
     const rangoEl = document.getElementById('total-lluvia-rango');
@@ -298,11 +253,11 @@
       if (data?.desde && data?.hasta) {
         rangoEl.textContent = `(del ${data.desde} al ${data.hasta})`;
       } else {
-        rangoEl.textContent = '(año actual)';
+        rangoEl.textContent = '(a帽o actual)';
       }
     } catch (e) {
       console.error(e);
-      el.textContent = '—';
+      el.textContent = '鈥?;
       el.title = 'No se pudo cargar la lluvia anual';
     }
   })();
@@ -322,7 +277,6 @@ document.getElementById('cerrar-sesion')?.addEventListener('click',async()=>{try
 </script>
 </body>
 </html>
-
 
 
 
